@@ -11,8 +11,7 @@ class CirclePaint extends CustomPainter {
     final area = Rect.fromCircle(
         center: size.center(Offset.zero), radius: size.width / 2);
 
-    canvas.drawArc(
-        area, -pi / 2, 2 * pi * value, true, Paint()..color = Colors.pinkAccent);
+    canvas.drawArc(area, -pi / 2, 2 * pi * value, true, Paint()..color = Colors.pinkAccent);
   }
 
   @override
