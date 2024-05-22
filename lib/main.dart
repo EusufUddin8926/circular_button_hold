@@ -33,20 +33,26 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   double progressValue = 0; // Initial progress value
   Timer? _timer;
+  bool isTextShow = false;
 
   void _onTapDown(TapDownDetails details) {
+    setState(() {
+      isTextShow = false;
+    });
+
     _timer = Timer.periodic(const Duration(milliseconds: 20), (timer) {
       setState(() {
         if (progressValue < 100) {
           progressValue += 1;
-        }else{
-          if(progressValue==100){
+        } else {
+          if (progressValue == 100) {
             _timer?.cancel();
-           Future.delayed(Duration(seconds: 1), () {
-             setState(() {
-               progressValue = 0;
-             });
-           },);
+            Future.delayed(Duration(seconds: 1), () {
+              setState(() {
+                isTextShow = true;
+                progressValue = 0;
+              });
+            });
           }
           print(progressValue);
         }
@@ -58,6 +64,7 @@ class _MyHomePageState extends State<MyHomePage> {
     _timer?.cancel();
     setState(() {
       progressValue = 0; // Reset progress
+      isTextShow = true;
     });
   }
 
@@ -69,7 +76,7 @@ class _MyHomePageState extends State<MyHomePage> {
 
   @override
   Widget build(BuildContext context) {
-    double normalizedValue = progressValue / 100; // Normalize to 0.0 - 1.0
+    double normalizedValue = progressValue / 100;
 
     return Scaffold(
       appBar: AppBar(
@@ -84,21 +91,39 @@ class _MyHomePageState extends State<MyHomePage> {
             _timer?.cancel();
             setState(() {
               progressValue = 0; // Reset progress
+              isTextShow = true;
             });
           },
-          child: Container(
-            width: 150,
-            height: 150,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              border: Border.all(
-                color: Colors.pinkAccent,
-                width: 4,
+          child: Stack(
+            alignment: Alignment.center,
+            children: [
+              Container(
+                width: 150,
+                height: 150,
+                decoration: BoxDecoration(
+                  shape: BoxShape.circle,
+                  border: Border.all(
+                    color: Colors.pinkAccent,
+                    width: 4,
+                  ),
+                ),
+                child: CustomPaint(
+                  painter: CirclePaint(normalizedValue),
+                ),
               ),
-            ),
-            child: CustomPaint(
-              painter: CirclePaint(normalizedValue),
-            ),
+              AnimatedOpacity(
+                opacity: isTextShow ? 1.0 : 0.0,
+                duration: Duration(milliseconds: 300),
+                child: Text(
+                  'Tap to Hold',
+                  style: TextStyle(
+                    fontSize: 16,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
+                  ),
+                ),
+              ),
+            ],
           ),
         ),
       ),
